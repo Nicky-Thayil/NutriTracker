@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Food Log - NutriTracker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6">
+                <i class="bi bi-journal-plus text-primary"></i> Food Log
+            </h1>
+            <p class="text-muted">Track your daily food intake</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <input type="date" class="form-control" id="dateSelector" value="{{ target_date }}" onchange="changeDate()">
+        </div>
+    </div>
+
+    <!-- Daily Summary -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h4 class="text-danger">{{ nutrition.totals.calories }}</h4>
+                    <small class="text-muted">Calories</small>
+                    <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-danger" style="width: {{ nutrition.percentages.calories }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h4 class="text-primary">{{ nutrition.totals.protein }}g</h4>
+                    <small class="text-muted">Protein</small>
+                    <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: {{ nutrition.percentages.protein }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h4 class="text-info">{{ nutrition.totals.carbs }}g</h4>
+                    <small class="text-muted">Carbs</small>
+                    <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-info" style="width: {{ nutrition.percentages.carbs }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h4 class="text-warning">{{ nutrition.totals.fat }}g</h4>
+                    <small class="text-muted">Fat</small>
+                    <div class="progress mt-2" style="height: 4px;">
+                        <div class="progress-bar bg-warning" style="width: {{ nutrition.percentages.fat }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Food Logs -->
+        <div class="col-lg-8">
+            <!-- Meal Categories -->
+            {% for meal_type in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-capitalize">
+                        <i class="bi bi-{{ 'sunrise' if meal_type == 'breakfast' else 'sun' if meal_type == 'lunch' else 'moon' if meal_type == 'dinner' else 'cup' }}"></i>
+                        {{ meal_type }}
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showAddFoodModal('{{ meal_type }}')">
+                        <i class="bi bi-plus"></i> Add Food
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% set meal_logs = logs|selectattr('meal_type', 'equalto', meal_type)|list %}
+                    {% if meal_logs %}
+                        {% for log in meal_logs %}
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <div>
+                                <strong>{{ log.food.name }}</strong>
+                                {% if log.food.brand %}
+                                    <small class="text-muted">- {{ log.food.brand }}</small>
+                                {% endif %}
+                                <br>
+                                <small class="text-muted">{{ log.quantity }}g</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-secondary">{{ log.calories|round }} cal</span>
+                                <form method="POST" action="{{ url_for('delete_food_log', log_id=log.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Delete this food entry?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Meal Totals -->
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <strong>{{ nutrition.meal_breakdown[meal_type].calories|round }}</strong>
+                                    <br><small>Calories</small>
+                                </div>
+                                <div class="col-3">
+                                    <strong>{{ nutrition.meal_breakdown[meal_type].protein|round }}g</strong>
+                                    <br><small>Protein</small>
+                                </div>
+                                <div class="col-3">
+                                    <strong>{{ nutrition.meal_breakdown[meal_type].carbs|round }}g</strong>
+                                    <br><small>Carbs</small>
+                                </div>
+                                <div class="col-3">
+                                    <strong>{{ nutrition.meal_breakdown[meal_type].fat|round }}g</strong>
+                                    <br><small>Fat</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-4">
+                            <i class="bi bi-plus-circle"></i><br>
+                            No food logged for {{ meal_type }} yet.<br>
+                            <button type="button" class="btn btn-sm btn-primary mt-2" onclick="showAddFoodModal('{{ meal_type }}')">
+                                Add Food
+                            </button>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Quick Actions Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i> Quick Add
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" onclick="startBarcodeScanner()">
+                            <i class="bi bi-upc-scan"></i> Scan Barcode
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="startFoodRecognition()">
+                            <i class="bi bi-camera"></i> Take Photo
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="showAddFoodModal('snack')">
+                            <i class="bi bi-search"></i> Search Food
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Goals -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-target"></i> Daily Goals
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 text-center">
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold">{{ nutrition.goals.calories }}</div>
+                                <small class="text-muted">Calorie Goal</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold">{{ nutrition.goals.protein }}g</div>
+                                <small class="text-muted">Protein Goal</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold">{{ nutrition.goals.carbs }}g</div>
+                                <small class="text-muted">Carbs Goal</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold">{{ nutrition.goals.fat }}g</div>
+                                <small class="text-muted">Fat Goal</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Food Modal -->
+<div class="modal fade" id="addFoodModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Food</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_food') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="foodSearch" class="form-label">Search Food</label>
+                        <input type="text" class="form-control" id="foodSearch" placeholder="Type to search..." oninput="searchFood()">
+                        <div id="foodResults" class="mt-2"></div>
+                    </div>
+                    
+                    <div id="selectedFoodInfo" style="display: none;">
+                        <div class="alert alert-info">
+                            <strong id="selectedFoodName"></strong>
+                            <div id="selectedFoodDetails"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="quantity" class="form-label">Quantity (grams)</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="100" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="meal_type" class="form-label">Meal</label>
+                            <select class="form-select" id="meal_type" name="meal_type" required>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="snack">Snack</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="food_id" id="selectedFoodId">
+                    <input type="hidden" name="log_date" value="{{ target_date }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="addFoodBtn" disabled>Add Food</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Camera modals (reused from dashboard) -->
+<div class="modal fade" id="barcodeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scan Barcode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <video id="barcodeVideo" width="100%" height="300" autoplay></video>
+                <div id="barcodeResult" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="foodRecognitionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recognize Food</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <video id="foodVideo" width="100%" height="300" autoplay></video>
+                <button type="button" class="btn btn-primary mt-3" onclick="captureFood()">
+                    <i class="bi bi-camera"></i> Capture
+                </button>
+                <div id="foodResult" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function changeDate() {
+    const date = document.getElementById('dateSelector').value;
+    window.location.href = `{{ url_for('food_log') }}?date=${date}`;
+}
+
+function showAddFoodModal(mealType) {
+    document.getElementById('meal_type').value = mealType;
+    new bootstrap.Modal(document.getElementById('addFoodModal')).show();
+}
+
+let searchTimeout;
+function searchFood() {
+    clearTimeout(searchTimeout);
+    const query = document.getElementById('foodSearch').value;
+    
+    if (query.length < 2) {
+        document.getElementById('foodResults').innerHTML = '';
+        return;
+    }
+    
+    searchTimeout = setTimeout(() => {
+        fetch(`{{ url_for('search_food') }}?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(foods => {
+                const resultsDiv = document.getElementById('foodResults');
+                if (foods.length === 0) {
+                    resultsDiv.innerHTML = '<p class="text-muted">No foods found</p>';
+                    return;
+                }
+                
+                let html = '<div class="list-group">';
+                foods.forEach(food => {
+                    html += `
+                        <button type="button" class="list-group-item list-group-item-action" onclick="selectFood(${food.id}, '${food.name}', '${food.brand || ''}', ${food.calories_per_100g || 0})">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>${food.name}</strong>
+                                    ${food.brand ? `<br><small class="text-muted">${food.brand}</small>` : ''}
+                                </div>
+                                <span class="badge bg-secondary">${food.calories_per_100g || 0} cal/100g</span>
+                            </div>
+                        </button>
+                    `;
+                });
+                html += '</div>';
+                resultsDiv.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+                document.getElementById('foodResults').innerHTML = '<p class="text-danger">Search error</p>';
+            });
+    }, 300);
+}
+
+function selectFood(id, name, brand, calories) {
+    document.getElementById('selectedFoodId').value = id;
+    document.getElementById('selectedFoodName').textContent = name;
+    document.getElementById('selectedFoodDetails').innerHTML = `
+        ${brand ? `<div>Brand: ${brand}</div>` : ''}
+        <div>Calories: ${calories} per 100g</div>
+    `;
+    document.getElementById('selectedFoodInfo').style.display = 'block';
+    document.getElementById('addFoodBtn').disabled = false;
+    document.getElementById('foodResults').innerHTML = '';
+    document.getElementById('foodSearch').value = name;
+}
+</script>
+<script src="{{ url_for('static', filename='js/barcode-scanner.js') }}"></script>
+<script src="{{ url_for('static', filename='js/food-recognition.js') }}"></script>
+{% endblock %}

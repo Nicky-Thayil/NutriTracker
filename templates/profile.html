@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - NutriTracker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="bi bi-person text-primary"></i> Profile
+            </h1>
+            <p class="text-muted">Manage your personal information and goals</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Profile Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-gear"></i> Personal Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('update_profile') }}">
+                        <div class="row">
+                            <!-- Basic Info -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="age" class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="age" name="age" value="{{ user.age or '' }}" min="13" max="120">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="gender">
+                                        <option value="">Select gender</option>
+                                        <option value="male" {{ 'selected' if user.gender == 'male' }}>Male</option>
+                                        <option value="female" {{ 'selected' if user.gender == 'female' }}>Female</option>
+                                        <option value="other" {{ 'selected' if user.gender == 'other' }}>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="height" class="form-label">Height (cm)</label>
+                                    <input type="number" class="form-control" id="height" name="height" value="{{ user.height or '' }}" min="100" max="250" step="0.1">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="activity_level" class="form-label">Activity Level</label>
+                                    <select class="form-select" id="activity_level" name="activity_level">
+                                        <option value="">Select activity level</option>
+                                        <option value="sedentary" {{ 'selected' if user.activity_level == 'sedentary' }}>Sedentary (little/no exercise)</option>
+                                        <option value="lightly_active" {{ 'selected' if user.activity_level == 'lightly_active' }}>Lightly Active (light exercise 1-3 days/week)</option>
+                                        <option value="moderately_active" {{ 'selected' if user.activity_level == 'moderately_active' }}>Moderately Active (moderate exercise 3-5 days/week)</option>
+                                        <option value="very_active" {{ 'selected' if user.activity_level == 'very_active' }}>Very Active (hard exercise 6-7 days/week)</option>
+                                        <option value="extremely_active" {{ 'selected' if user.activity_level == 'extremely_active' }}>Extremely Active (very hard exercise/physical job)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Goals -->
+                        <hr>
+                        <h6 class="mb-3">
+                            <i class="bi bi-target"></i> Goals
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="goal" class="form-label">Primary Goal</label>
+                                    <select class="form-select" id="goal" name="goal">
+                                        <option value="">Select goal</option>
+                                        <option value="lose_weight" {{ 'selected' if user.goal == 'lose_weight' }}>Lose Weight</option>
+                                        <option value="maintain" {{ 'selected' if user.goal == 'maintain' }}>Maintain Weight</option>
+                                        <option value="gain_weight" {{ 'selected' if user.goal == 'gain_weight' }}>Gain Weight</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="daily_calorie_goal" class="form-label">Daily Calorie Goal</label>
+                                    <input type="number" class="form-control" id="daily_calorie_goal" name="daily_calorie_goal" value="{{ user.daily_calorie_goal or 2000 }}" min="1000" max="5000">
+                                    <div class="form-text">Will be automatically calculated based on your profile if left at default</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Summary -->
+        <div class="col-lg-4">
+            <!-- Account Info -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-circle"></i> Account Info
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if user.profile_image_url %}
+                        <img src="{{ user.profile_image_url }}" alt="Profile Picture" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                    {% else %}
+                        <i class="bi bi-person-circle text-muted mb-3" style="font-size: 5rem;"></i>
+                    {% endif %}
+                    <h5>{{ user.first_name or 'User' }} {{ user.last_name or '' }}</h5>
+                    {% if user.email %}
+                        <p class="text-muted">{{ user.email }}</p>
+                    {% endif %}
+                    <small class="text-muted">Member since {{ user.created_at.strftime('%B %Y') }}</small>
+                </div>
+            </div>
+
+            <!-- Calculated Metrics -->
+            {% if user.age and user.gender and user.height %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calculator"></i> Calculated Metrics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- BMR & TDEE would be calculated here -->
+                    <div class="row text-center g-3">
+                        <div class="col-12">
+                            <div class="border rounded p-3">
+                                <div class="fw-bold text-primary">Estimated BMR</div>
+                                <div class="h5 mb-0">~2000 kcal</div>
+                                <small class="text-muted">Base Metabolic Rate</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="border rounded p-3">
+                                <div class="fw-bold text-info">Estimated TDEE</div>
+                                <div class="h5 mb-0">~2400 kcal</div>
+                                <small class="text-muted">Total Daily Energy Expenditure</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> 
+                        Calculations are estimates based on your profile information. 
+                        Consult a healthcare provider for personalized advice.
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle text-warning mb-3" style="font-size: 3rem;"></i>
+                    <h6>Complete Your Profile</h6>
+                    <p class="text-muted small">
+                        Add your age, gender, and height to get personalized 
+                        calorie recommendations and better tracking insights.
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Auto-calculate calorie goal based on profile changes
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = ['age', 'gender', 'height', 'activity_level', 'goal'];
+    
+    inputs.forEach(inputId => {
+        const element = document.getElementById(inputId);
+        if (element) {
+            element.addEventListener('change', updateCalorieRecommendation);
+        }
+    });
+});
+
+function updateCalorieRecommendation() {
+    // This would integrate with the nutrition calculator
+    // For now, just show that the system is responsive
+    const calorieInput = document.getElementById('daily_calorie_goal');
+    if (calorieInput && calorieInput.value == 2000) {
+        // Only update if still at default value
+        // In real implementation, this would call the backend
+        console.log('Would update calorie recommendation based on profile changes');
+    }
+}
+</script>
+{% endblock %}

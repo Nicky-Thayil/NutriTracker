@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NutriTracker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="bi bi-speedometer2 text-primary"></i> Dashboard
+            </h1>
+            <p class="text-muted">Your nutrition and fitness overview for today</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-fire text-danger mb-2" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">{{ nutrition.totals.calories }}</h3>
+                    <p class="card-text text-muted">Calories</p>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-danger" style="width: {{ nutrition.percentages.calories }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ nutrition.percentages.calories }}% of goal</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-egg text-primary mb-2" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">{{ nutrition.totals.protein }}g</h3>
+                    <p class="card-text text-muted">Protein</p>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: {{ nutrition.percentages.protein }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ nutrition.percentages.protein }}% of goal</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-droplet text-info mb-2" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">{{ nutrition.totals.carbs }}g</h3>
+                    <p class="card-text text-muted">Carbs</p>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: {{ nutrition.percentages.carbs }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ nutrition.percentages.carbs }}% of goal</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-circle-fill text-warning mb-2" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">{{ nutrition.totals.fat }}g</h3>
+                    <p class="card-text text-muted">Fat</p>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: {{ nutrition.percentages.fat }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ nutrition.percentages.fat }}% of goal</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Nutrition Chart -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart"></i> Daily Nutrition Breakdown
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="macroChart" width="300" height="300"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Meal Breakdown</h6>
+                            {% for meal_type, values in nutrition.meal_breakdown.items() %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-capitalize">{{ meal_type }}:</span>
+                                <span class="badge bg-secondary">{{ values.calories|round }} cal</span>
+                            </div>
+                            {% endfor %}
+                            
+                            <hr>
+                            <h6 class="mt-3">Other Nutrients</h6>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <small class="text-muted">Fiber</small>
+                                    <div class="fw-bold">{{ nutrition.totals.fiber }}g</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Sugar</small>
+                                    <div class="fw-bold">{{ nutrition.totals.sugar }}g</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weight Progress & Recommendations -->
+        <div class="col-lg-4">
+            <!-- Current Weight -->
+            {% if weight_progress.latest_weight %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-speedometer"></i> Current Weight
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="text-primary">{{ weight_progress.latest_weight }} kg</h2>
+                    {% if weight_progress.change != 0 %}
+                    <p class="mb-0">
+                        <span class="badge bg-{{ 'success' if weight_progress.change < 0 else 'warning' }}">
+                            {{ '+' if weight_progress.change > 0 else '' }}{{ weight_progress.change }} kg this month
+                        </span>
+                    </p>
+                    {% endif %}
+                    <a href="{{ url_for('weight_tracker') }}" class="btn btn-outline-primary btn-sm mt-2">
+                        View Progress
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recommendations -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightbulb"></i> Recommendations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recommendations %}
+                        {% for rec in recommendations[:3] %}
+                        <div class="alert alert-{{ 'danger' if rec.priority == 'high' else 'warning' if rec.priority == 'medium' else 'info' }} py-2 px-3 small">
+                            <i class="bi bi-{{ 'exclamation-triangle' if rec.priority == 'high' else 'info-circle' }}"></i>
+                            {{ rec.message }}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Great job! Keep up the good work with your nutrition tracking.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('food_log') }}" class="btn btn-primary w-100">
+                                <i class="bi bi-plus-circle"></i><br>
+                                <small>Log Food</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-primary w-100" onclick="startBarcodeScanner()">
+                                <i class="bi bi-upc-scan"></i><br>
+                                <small>Scan Barcode</small>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-primary w-100" onclick="startFoodRecognition()">
+                                <i class="bi bi-camera"></i><br>
+                                <small>Take Photo</small>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('weight_tracker') }}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-graph-up"></i><br>
+                                <small>Log Weight</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden camera modals -->
+<div class="modal fade" id="barcodeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scan Barcode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <video id="barcodeVideo" width="100%" height="300" autoplay></video>
+                <div id="barcodeResult" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="foodRecognitionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recognize Food</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <video id="foodVideo" width="100%" height="300" autoplay></video>
+                <button type="button" class="btn btn-primary mt-3" onclick="captureFood()">
+                    <i class="bi bi-camera"></i> Capture
+                </button>
+                <div id="foodResult" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Macro chart
+const ctx = document.getElementById('macroChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Protein', 'Carbs', 'Fat'],
+        datasets: [{
+            data: [{{ nutrition.totals.protein }}, {{ nutrition.totals.carbs }}, {{ nutrition.totals.fat }}],
+            backgroundColor: ['#0d6efd', '#17a2b8', '#ffc107'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+<script src="{{ url_for('static', filename='js/barcode-scanner.js') }}"></script>
+<script src="{{ url_for('static', filename='js/food-recognition.js') }}"></script>
+{% endblock %}

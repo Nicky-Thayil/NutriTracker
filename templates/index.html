@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to NutriTracker{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Hero Section -->
+    <div class="bg-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Track Your Nutrition,<br>
+                        Transform Your Health
+                    </h1>
+                    <p class="lead mb-4">
+                        Smart nutrition and fitness tracking with barcode scanning, 
+                        AI food recognition, and comprehensive analytics to help you reach your goals.
+                    </p>
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="{{ url_for('replit_auth.login') }}" class="btn btn-light btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Get Started
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="p-4">
+                        <i class="bi bi-activity text-white" style="font-size: 8rem; opacity: 0.8;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container py-5">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="display-6 fw-bold">Powerful Features</h2>
+                <p class="lead text-muted">Everything you need to track your nutrition and fitness journey</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Barcode Scanning -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-upc-scan text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Barcode Scanning</h5>
+                        <p class="card-text">
+                            Instantly log food by scanning barcodes. Access nutrition data 
+                            from thousands of products in the Open Food Facts database.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Food Recognition -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-camera text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">AI Food Recognition</h5>
+                        <p class="card-text">
+                            Take photos of your meals and let AI identify the food items. 
+                            Quick and accurate food logging made simple.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nutrition Analytics -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-graph-up text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Nutrition Analytics</h5>
+                        <p class="card-text">
+                            Comprehensive dashboard with charts and insights. 
+                            Track calories, macros, and progress toward your goals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weight Tracking -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-speedometer2 text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Weight Tracking</h5>
+                        <p class="card-text">
+                            Monitor your weight over time with interactive charts. 
+                            Visualize trends and progress toward your fitness goals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fitness Recommendations -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-trophy text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Smart Recommendations</h5>
+                        <p class="card-text">
+                            Get personalized fitness and nutrition recommendations 
+                            based on your goals, progress, and eating patterns.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Responsive -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-phone text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Mobile Friendly</h5>
+                        <p class="card-text">
+                            Fully responsive design works perfectly on all devices. 
+                            Log food on-the-go with camera and barcode scanning.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-light py-5">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="display-6 fw-bold mb-4">Ready to Start Your Journey?</h2>
+                    <p class="lead mb-4">
+                        Join thousands of users who are already transforming their health 
+                        with smart nutrition tracking.
+                    </p>
+                    <a href="{{ url_for('replit_auth.login') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-rocket-takeoff"></i> Start Tracking Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

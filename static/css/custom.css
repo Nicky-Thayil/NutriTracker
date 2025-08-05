@@ -1,0 +1,465 @@
+/* Custom CSS for NutriTracker - Supplements Bootstrap theme */
+
+/* Custom variables for consistency */
+:root {
+    --nutritracker-primary: #0d6efd;
+    --nutritracker-success: #198754;
+    --nutritracker-warning: #ffc107;
+    --nutritracker-danger: #dc3545;
+    --nutritracker-info: #0dcaf0;
+    --nutritracker-border-radius: 0.5rem;
+    --nutritracker-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --nutritracker-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Enhanced card styling */
+.card {
+    border: none;
+    border-radius: var(--nutritracker-border-radius);
+    box-shadow: var(--nutritracker-shadow);
+    transition: box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: var(--nutritracker-shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.125);
+    border-radius: var(--nutritracker-border-radius) var(--nutritracker-border-radius) 0 0 !important;
+}
+
+/* Progress bars with better styling */
+.progress {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Button enhancements */
+.btn {
+    border-radius: var(--nutritracker-border-radius);
+    font-weight: 500;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-lg {
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Alert styling */
+.alert {
+    border: none;
+    border-radius: var(--nutritracker-border-radius);
+    border-left: 4px solid;
+}
+
+.alert-success {
+    border-left-color: var(--nutritracker-success);
+}
+
+.alert-warning {
+    border-left-color: var(--nutritracker-warning);
+}
+
+.alert-danger {
+    border-left-color: var(--nutritracker-danger);
+}
+
+.alert-info {
+    border-left-color: var(--nutritracker-info);
+}
+
+/* Form styling */
+.form-control, .form-select {
+    border-radius: var(--nutritracker-border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--nutritracker-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Modal enhancements */
+.modal-content {
+    border: none;
+    border-radius: var(--nutritracker-border-radius);
+    box-shadow: var(--nutritracker-shadow-lg);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+/* Video elements for camera functionality */
+video {
+    border-radius: var(--nutritracker-border-radius);
+    background-color: #000;
+    width: 100%;
+    height: auto;
+}
+
+/* Loading states */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--nutritracker-border-radius);
+    z-index: 1000;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 1rem 0;
+}
+
+/* Food log specific styling */
+.food-log-item {
+    transition: background-color 0.15s ease-in-out;
+    border-radius: var(--nutritracker-border-radius);
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.food-log-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Nutrition summary cards */
+.nutrition-card {
+    text-align: center;
+    padding: 1.5rem 1rem;
+}
+
+.nutrition-card .card-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.nutrition-card .progress {
+    margin-top: 0.5rem;
+    height: 6px;
+}
+
+/* Weight tracker specific */
+.weight-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Camera modal styling */
+.camera-modal .modal-body {
+    padding: 1rem;
+    text-align: center;
+}
+
+.camera-modal video {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: var(--nutritracker-border-radius);
+    margin-bottom: 1rem;
+}
+
+/* Barcode scanner overlay */
+.barcode-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 100px;
+    border: 2px solid var(--nutritracker-primary);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.barcode-overlay::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--nutritracker-primary);
+    animation: scan-line 2s ease-in-out infinite;
+}
+
+@keyframes scan-line {
+    0%, 100% { opacity: 0; transform: translateY(-50px); }
+    50% { opacity: 1; transform: translateY(0); }
+}
+
+/* Food search results */
+.food-search-results {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: var(--nutritracker-border-radius);
+}
+
+.food-search-results .list-group-item {
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.125);
+    transition: background-color 0.15s ease-in-out;
+}
+
+.food-search-results .list-group-item:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.food-search-results .list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .nutrition-card .card-title {
+        font-size: 1.5rem;
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .btn-group .btn {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    video {
+        height: 250px;
+        object-fit: cover;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .display-6 {
+        font-size: 2rem;
+    }
+    
+    .nutrition-card {
+        padding: 1rem 0.5rem;
+    }
+}
+
+/* Animation for smooth transitions */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading spinner customization */
+.spinner-border {
+    border-width: 0.15em;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.1em;
+}
+
+/* Badge styling */
+.badge {
+    font-weight: 500;
+    border-radius: var(--nutritracker-border-radius);
+}
+
+/* Hero section styling for landing page */
+.hero-section {
+    background: linear-gradient(135deg, var(--nutritracker-primary) 0%, #0056b3 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Feature cards on landing page */
+.feature-card {
+    height: 100%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+/* Profile image styling */
+.profile-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-image-lg {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Utilities */
+.text-shadow {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+/* Dark theme specific adjustments */
+[data-bs-theme="dark"] {
+    .card {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .form-control, .form-select {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #fff;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    
+    .list-group-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.125);
+        color: #fff;
+    }
+    
+    .modal-content {
+        background-color: #1e1e1e;
+    }
+    
+    .dropdown-menu {
+        background-color: #2d2d2d;
+        border-color: rgba(255, 255, 255, 0.125);
+    }
+    
+    .dropdown-item {
+        color: #fff;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .modal,
+    .btn,
+    .alert-dismissible .btn-close {
+        display: none !important;
+    }
+    
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Accessibility improvements */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: 2px solid var(--nutritracker-primary);
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid;
+    }
+    
+    .btn {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
